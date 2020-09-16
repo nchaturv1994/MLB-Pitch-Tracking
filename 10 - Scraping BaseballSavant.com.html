@@ -13215,7 +13215,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Downloading-the-Data-and-Loading-to-SQL">Downloading the Data and Loading to SQL<a class="anchor-link" href="#Downloading-the-Data-and-Loading-to-SQL">&#182;</a></h3><p>This next section required a bit of fine tuning from a performance standpoint. Baseball Savant queries time out if they take too long, and its CSV exporting functionality cuts off at a fixed number of rows. For this reason, I decided to download one day of data at a time.</p>
-<p>The queries also don't work on occasion for unknown reasons. To counteract this issue, I have included a try/else statement that forces the loop to stop if a data pull for a certain date does not work. For this example, I am running five days worth of uploads (September 1, 2020 to September 5, 2020).</p>
+<p>The queries also don't work on occasion for unknown reasons. To counteract this issue, I have included a try/else statement that forces the loop to stop if a data pull for a certain date does not work.</p>
 
 </div>
 </div>
@@ -13230,8 +13230,8 @@ div#notebook {
                                <span class="n">pw</span><span class="o">=</span><span class="s2">&quot;rootroot&quot;</span><span class="p">,</span>
                                <span class="n">db</span><span class="o">=</span><span class="s2">&quot;mlb&quot;</span><span class="p">))</span>
 
-<span class="n">latest</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="s2">&quot;SELECT max(game_date) from pitch_tracking;&quot;</span><span class="p">,</span><span class="n">con</span> <span class="o">=</span> <span class="n">engine</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">latest</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">latest</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="s2">&quot;SELECT max(game_date) from pitch_tracking;&quot;</span><span class="p">,</span><span class="n">con</span> <span class="o">=</span> <span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">latest</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13248,7 +13248,7 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>2020-08-31 00:00:00
+<pre>2020-09-14 00:00:00
 </pre>
 </div>
 </div>
@@ -13262,9 +13262,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s2">&quot;08/31/2020&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">date</span> <span class="o">=</span> <span class="n">latest</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">while</span> <span class="n">date</span> <span class="o">&lt;=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s2">&quot;09/05/2020&quot;</span><span class="p">):</span>
+<span class="k">while</span> <span class="n">date</span> <span class="o">&lt;=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
     
     <span class="n">start_dt</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">end_dt</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -13281,10 +13281,16 @@ div#notebook {
                                        <span class="n">pw</span><span class="o">=</span><span class="s2">&quot;rootroot&quot;</span><span class="p">,</span>
                                        <span class="n">db</span><span class="o">=</span><span class="s2">&quot;mlb&quot;</span><span class="p">))</span>
         
-        <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;pitch_tracking&#39;</span><span class="p">,</span> <span class="n">con</span> <span class="o">=</span> <span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span> <span class="o">=</span> <span class="s1">&#39;append&#39;</span><span class="p">,</span>
-                  <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtypes</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="s2">&quot;SELECT count(*) FROM pitch_tracking WHERE game_date = </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s2">;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_dt</span><span class="p">),</span>
+                            <span class="n">con</span> <span class="o">=</span> <span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Download successful for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;pitch_tracking&#39;</span><span class="p">,</span> <span class="n">con</span> <span class="o">=</span> <span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span> <span class="o">=</span> <span class="s1">&#39;append&#39;</span><span class="p">,</span>
+                      <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtypes</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Download successful for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data for </span><span class="si">{}</span><span class="s2"> is already in the database.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
         
         <span class="n">date</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
@@ -13293,29 +13299,6 @@ div#notebook {
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Download successful for 2020-08-31
-Download successful for 2020-09-01
-Download successful for 2020-09-02
-Download successful for 2020-09-03
-Download successful for 2020-09-04
-Download successful for 2020-09-05
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -13446,7 +13429,7 @@ Download successful for 2020-09-05
     <tr>
       <th>12</th>
       <td>2020</td>
-      <td>174375</td>
+      <td>210672</td>
     </tr>
   </tbody>
 </table>
